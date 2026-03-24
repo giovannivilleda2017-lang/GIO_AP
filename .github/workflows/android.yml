@@ -12,10 +12,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Force Fix and Build
+      - name: Full Permissions and Build
         run: |
           cd android
-          # Forzamos Gradle 8.2
+          # Forzamos Gradle 8.2 (que ya vimos que funciona)
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
@@ -24,8 +24,8 @@ jobs:
           echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
           
-          # FIX MÁGICO para el error de Jar/bcprov
-          echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8 --add-exports=java.base/sun.security.x509=ALL-UNNAMED" >> gradle.properties
+          # Damos permisos totales a la carpeta
+          sudo chmod -R 777 .
           
           chmod +x gradlew
           ./gradlew clean assembleDebug --no-daemon --no-build-cache
@@ -33,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: GIO_AP_APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/*.apk
