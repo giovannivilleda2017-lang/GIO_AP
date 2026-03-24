@@ -13,8 +13,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Instalando dependencias de Capacitor
-        run: npm install
+      - name: Instalando dependencias
+        run: npm install --force
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -24,8 +24,15 @@ jobs:
 
       - name: Compilar GIO_AP
         run: |
-          cd android
-          gradle assembleDebug --no-daemon
+          if [ -d android ]; then
+            cd android
+            # Usamos gradle instalado en el runner
+            gradle assembleDebug --no-daemon
+          else
+            echo "ERROR: No existe el directorio android. ¿Olvidaste subirlo?"
+            ls -R # Esto nos listara que archivos SI ve GitHub para investigar
+            exit 1
+          fi
           
       - name: Subir APK
         uses: actions/upload-artifact@v4
