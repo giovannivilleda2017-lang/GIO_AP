@@ -14,14 +14,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Deep Clean and Force Build
+      - name: Fix Cordova and Build
         run: |
           cd android
           sed -i 's/gradle-.*-all.zip/gradle-8.2-all.zip/' gradle/wrapper/gradle-wrapper.properties
+          sed -i 's/org.apache.cordova:framework:11.0.0/org.apache.cordova:framework:10.0.0/g' build.gradle || true
           chmod +x gradlew
-          ./gradlew clean
-          rm -rf ~/.gradle/caches/
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew clean assembleDebug --no-daemon
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
