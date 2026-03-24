@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  JAVA_HOME: ${{ github.workspace }}/jdk
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,12 +14,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Gradle
+      - name: Force Gradle 8.2 and Java 17
         run: |
           cd android
           sed -i 's/gradle-.*-all.zip/gradle-8.2-all.zip/' gradle/wrapper/gradle-wrapper.properties
+          echo "org.gradle.java.home=${JAVA_HOME_17_X64}" >> gradle.properties
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon --stacktrace
+          ./gradlew clean assembleDebug --no-daemon
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
