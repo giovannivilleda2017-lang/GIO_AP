@@ -7,37 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Free up disk space
-        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
-          
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-
-      - name: Configure and Build GIO_AP
-        env:
-          ORG_GRADLE_PROJECT_org_gradle_classpath_intrumentation_disable: 'true'
+      - name: Compilar GIO_AP
         run: |
           cd android
-          rm -f gradle/wrapper/gradle-wrapper.properties
-          mkdir -p gradle/wrapper
-          echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
-          echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-          # Cambiamos a 8.5 que es la pareja ideal de Java 21
-          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-all.zip" >> gradle/wrapper/gradle-wrapper.properties
-          echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
-          echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-          
-          chmod +x gradlew
-          rm -rf ~/.gradle/caches/
-          
-          # Aquí está la corrección: "intrumentation" sin la 's'
-          ./gradlew assembleDebug --no-daemon --no-build-cache --stacktrace -Dorg.gradle.vfs.watch=false -Dorg.gradle.classpath.intrumentation.disable=true
-          
-      - name: Upload APK
+          # Usamos gradle instalado en el sistema, no el local que esta roto
+          gradle assembleDebug --no-daemon
+      - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
           name: GIO_AP_APK
