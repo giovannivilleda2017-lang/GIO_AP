@@ -2,8 +2,6 @@ name: Build APK
 on:
   push:
     branches: [ main ]
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,13 +12,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Fix Cordova and Build
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.2'
+          cache-disabled: true
+      - name: Deep Clean and Build
         run: |
           cd android
-          sed -i 's/gradle-.*-all.zip/gradle-8.2-all.zip/' gradle/wrapper/gradle-wrapper.properties
-          sed -i 's/org.apache.cordova:framework:11.0.0/org.apache.cordova:framework:10.0.0/g' build.gradle || true
+          rm -rf ~/.gradle/caches/
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon
+          ./gradlew clean assembleDebug --no-daemon --no-build-cache
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
