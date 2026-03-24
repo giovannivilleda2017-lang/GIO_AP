@@ -15,7 +15,7 @@ jobs:
       - name: Force Fix and Build
         run: |
           cd android
-          # Destruimos la configuración que descarga la versión errónea
+          # Forzamos Gradle 8.2
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
@@ -23,6 +23,9 @@ jobs:
           echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-all.zip" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+          
+          # FIX MÁGICO para el error de Jar/bcprov
+          echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8 --add-exports=java.base/sun.security.x509=ALL-UNNAMED" >> gradle.properties
           
           chmod +x gradlew
           ./gradlew clean assembleDebug --no-daemon --no-build-cache
