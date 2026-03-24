@@ -9,8 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Free up disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
           
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -23,21 +22,19 @@ jobs:
           ORG_GRADLE_PROJECT_org_gradle_classpath_intrumentation_disable: 'true'
         run: |
           cd android
-          # Configuramos Gradle 8.5 para total compatibilidad con Java 21
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
           echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+          # Cambiamos a 8.5 que es la pareja ideal de Java 21
           echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-all.zip" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
           
           chmod +x gradlew
-          
-          # Limpieza total para asegurar que no haya Jars corruptos
           rm -rf ~/.gradle/caches/
           
-          # Construcción con la bandera corregida (intrumentation)
+          # Aquí está la corrección: "intrumentation" sin la 's'
           ./gradlew assembleDebug --no-daemon --no-build-cache --stacktrace -Dorg.gradle.vfs.watch=false -Dorg.gradle.classpath.intrumentation.disable=true
           
       - name: Upload APK
