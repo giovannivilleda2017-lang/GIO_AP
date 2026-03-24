@@ -12,31 +12,33 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
           
-      - name: set up JDK 17
+      - name: set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
-      - name: Configure and Clean Build
+      - name: Configure and Build GIO_AP
+        env:
+          ORG_GRADLE_PROJECT_org_gradle_classpath_instrumentation_disable: 'true'
         run: |
           cd android
-          # Configuramos la versión 8.2-bin que es más ligera
+          # Configuramos Gradle 8.5 que es más estable con Java 21
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
           echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
+          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-all.zip" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
           
           chmod +x gradlew
           
-          # Borramos específicamente la librería que falla si existe
-          find ~/.gradle/caches/ -name "*bcprov-jdk18on-1.79.jar*" -delete || true
+          # Limpieza total antes de empezar
+          rm -rf ~/.gradle/caches/
           
-          # Construimos con diagnóstico completo y refresco de dependencias
-          ./gradlew clean assembleDebug --no-daemon --no-build-cache --refresh-dependencies --stacktrace --info
+          # Construimos con la bandera de desactivación de instrumentación
+          ./gradlew assembleDebug --no-daemon --no-build-cache --stacktrace -Dorg.gradle.vfs.watch=false -Dorg.gradle.classpath.instrumentation.disable=true
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
