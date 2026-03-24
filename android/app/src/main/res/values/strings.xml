@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GIO_AP</string>
+    <string name="title_activity_main">GIO_AP</string>
+    <string name="package_name">com.gio.ia.app</string>
+    <string name="custom_url_scheme">com.gio.ia.app</string>
+</resources>
