@@ -12,7 +12,7 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
           
-      - name: set up JDK 21
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -20,10 +20,10 @@ jobs:
 
       - name: Configure and Build GIO_AP
         env:
-          ORG_GRADLE_PROJECT_org_gradle_classpath_instrumentation_disable: 'true'
+          ORG_GRADLE_PROJECT_org_gradle_classpath_intrumentation_disable: 'true'
         run: |
           cd android
-          # Configuramos Gradle 8.5 que es más estable con Java 21
+          # Configuramos Gradle 8.5 para total compatibilidad con Java 21
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
@@ -34,11 +34,11 @@ jobs:
           
           chmod +x gradlew
           
-          # Limpieza total antes de empezar
+          # Limpieza total para asegurar que no haya Jars corruptos
           rm -rf ~/.gradle/caches/
           
-          # Construimos con la bandera de desactivación de instrumentación
-          ./gradlew assembleDebug --no-daemon --no-build-cache --stacktrace -Dorg.gradle.vfs.watch=false -Dorg.gradle.classpath.instrumentation.disable=true
+          # Construcción con la bandera corregida (intrumentation)
+          ./gradlew assembleDebug --no-daemon --no-build-cache --stacktrace -Dorg.gradle.vfs.watch=false -Dorg.gradle.classpath.intrumentation.disable=true
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
