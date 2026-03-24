@@ -9,10 +9,9 @@ jobs:
         with: {node-version: 18}
       - run: npm install
       - run: npm run build
-      - uses: ionic-team/capacitor-assets@latest
       - uses: actions/setup-java@v3
         with: {distribution: 'zulu', java-version: '17'}
       - run: npx cap sync android
-      - run: cd android && ./gradlew assembleDebug
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v3
         with: {name: GIO_AP_APK, path: android/app/build/outputs/apk/debug/app-debug.apk}
