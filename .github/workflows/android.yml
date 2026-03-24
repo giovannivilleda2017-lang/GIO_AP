@@ -14,28 +14,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Clean Specific Corrupt Caches
-        run: |
-          # Limpiamos exactamente lo que está causando el choque del Jar
-          rm -rf ~/.gradle/caches/jars-9/*bcprov*
-          rm -rf ~/.gradle/caches/modules-2/files-2.1/org.bouncycastle/
-          rm -rf ~/.gradle/caches/transforms-3/
+      - name: 1. Clear Gradle Cache (Step 1)
+        run: rm -rf ~/.gradle/caches/
 
-      - name: Build GIO_AP
+      - name: 2. Configure & Build (Step 2 & 4)
         run: |
           cd android
-          # Forzamos Gradle 8.2 que es tu versión estable
+          # Forzamos la versión 8.2-bin que sugeriste
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
           echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-all.zip" >> gradle/wrapper/gradle-wrapper.properties
+          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
           
           chmod +x gradlew
-          # Ejecutamos con los flags de limpieza que pusiste
-          ./gradlew clean assembleDebug --no-daemon --no-build-cache -Dorg.gradle.vfs.watch=false
+          # Ejecutamos con --info para el paso 4
+          ./gradlew clean assembleDebug --no-daemon --no-build-cache --info
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
