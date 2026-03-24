@@ -7,16 +7,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalando dependencias de Capacitor
+        run: npm install
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+
       - name: Compilar GIO_AP
         run: |
           cd android
-          # Usamos gradle instalado en el sistema, no el local que esta roto
           gradle assembleDebug --no-daemon
+          
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
