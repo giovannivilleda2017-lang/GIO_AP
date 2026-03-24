@@ -1,0 +1,15 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f9;
+}
+h1 { color: #333; }
+#lista-tareas {
+    background: white;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
