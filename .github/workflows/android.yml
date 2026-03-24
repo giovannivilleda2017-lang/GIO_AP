@@ -12,10 +12,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Full Permissions and Build
+      - name: Force Build GIO_AP
         run: |
           cd android
-          # Forzamos Gradle 8.2 (que ya vimos que funciona)
+          # Forzamos Gradle 8.2
           rm -f gradle/wrapper/gradle-wrapper.properties
           mkdir -p gradle/wrapper
           echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
@@ -24,11 +24,9 @@ jobs:
           echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
           echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
           
-          # Damos permisos totales a la carpeta
-          sudo chmod -R 777 .
-          
+          # FIX para el error de la foto (bcprov jar)
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon --no-build-cache
+          ./gradlew clean assembleDebug --no-daemon --no-build-cache -Dorg.gradle.vfs.watch=false
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
